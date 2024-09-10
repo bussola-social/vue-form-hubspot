@@ -67,10 +67,6 @@ export const useForm = (portalId, formId) => {
       }
     }
 
-    if (callBack) {
-      return callBack({ ...formState });
-    }
-
     if (!formId) {
       throw new Error(
         'You did not provided "portalId" and "formId" or submit callback function. Please, provide either'
@@ -89,21 +85,18 @@ export const useForm = (portalId, formId) => {
 
     const formData = JSON.stringify({ fields: data });
 
-    try {
-      await fetch(URL, {
-        method: "POST",
-        body: formData,
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
-    } catch (error) {
-      console.log(error);
+    const res = await fetch(URL, {
+      method: "POST",
+      body: formData,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
+    if (callBack) {
+      return callBack(res, resetForm);
     }
-    finally {
-      resetForm();
-    }
+
   };
 
   return {
